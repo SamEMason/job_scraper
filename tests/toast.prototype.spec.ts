@@ -1,4 +1,4 @@
-import { Browser, chromium, expect, Page, test } from '@playwright/test';
+import { Browser, Page, chromium, expect, test } from '@playwright/test';
 
 import Config from '#src/Config.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
