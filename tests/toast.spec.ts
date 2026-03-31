@@ -1,16 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+import Config from '#src/Config.ts';
+
 test('Gets job data from Toast Careers page', async ({ page }) => {
   // Go to Toast Careers page
-  await page.goto('https://careers.toasttab.com/jobs/search');
+  await page.goto(Config.CAREER_PAGE_URL);
 
   // Expect a title to contain "Current Openings".
   await expect(page).toHaveTitle(/Current Openings/);
 
   // Check the Remote Jobs filter
-  const remoteJobsCheckbox = page.locator('#remote');
-  await remoteJobsCheckbox.check();
+  if (Config.REMOTE_ENABLED) {
+    const remoteJobsCheckbox = page.locator('#remote');
+    await remoteJobsCheckbox.check();
+  }
 
+  // KEEPING SECTION SPECIFICALLY TAILORED TO ENGINEERING FOR NOW
+  // AVOIDING EARLY ABSTRACTION
+  
   // Check the engineering filter
   const engineeringListItem = page.locator('li', { hasText: 'Engineering' });
   const engineeringCheckbox = engineeringListItem.locator('input');
@@ -21,8 +28,6 @@ test('Gets job data from Toast Careers page', async ({ page }) => {
   await searchResultsRows.waitFor({ state: 'visible' });
 
   await searchResultsRows.highlight();
-
-  
 
   await page.pause();
 });
