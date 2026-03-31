@@ -1,11 +1,3 @@
-export interface Job {
-  title: string;
-  location: Location;
-  dept: string;
-  href: string;
-  reqId?: string;
-}
-
 interface ParsedLocation {
   country: string;
   city: string | null;

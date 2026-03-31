@@ -2,7 +2,8 @@ import { type Browser, type Page, chromium, expect } from '@playwright/test';
 
 import Config from '#src/Config.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
-import { type Job, Location } from '#src/types.ts';
+import { type Job } from '#src/models/Job.ts';
+import { Location } from '#src/models/Location.ts';
 
 const main = async () => {
   let browser: Browser | undefined;
