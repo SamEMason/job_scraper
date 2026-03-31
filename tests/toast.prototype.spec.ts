@@ -43,14 +43,12 @@ test('Gets job data from Toast Careers page', async () => {
   const jobTitles = searchResultsRows.locator(
     'h3.job-search-results-card-title'
   );
-  const jobHrefs = jobTitles.locator('a');
-
   const titles = await jobTitles.allInnerTexts();
-  const hrefs = await jobHrefs.elementHandles();
 
-  for (const href of hrefs) {
-    const link = await href.getAttribute('href');
-  }
+  const jobHrefs = jobTitles.locator('a');
+  const hrefs = await jobHrefs.evaluateAll((links) =>
+    links.map((link) => link.getAttribute('href') || '')
+  );
 
   const locations = searchResultsRows.locator('.job-component-location span');
   const locationText = await locations.allInnerTexts();
@@ -72,7 +70,7 @@ test('Gets job data from Toast Careers page', async () => {
         remote: '',
       },
       dept: deptNames[i],
-      href: (await hrefs[i].getAttribute('href')) || '',
+      href: hrefs[i],
       reqId: undefined,
     };
 
