@@ -4,16 +4,12 @@ import Config from '#src/Config.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 import { type Job, Location } from '#src/types.ts';
 
-let toastPage: ToastCareerPage;
-let browser: Browser;
-let page: Page;
-
-browser = await chromium.launch();
-const context = await browser.newContext();
-page = await context.newPage();
-toastPage = new ToastCareerPage(page);
-
 const main = async () => {
+  let browser: Browser = await chromium.launch();
+  const context = await browser.newContext();
+  let page: Page = await context.newPage();
+  let toastPage: ToastCareerPage = new ToastCareerPage(page);
+
   // Go to Toast Careers page
   await page.goto(toastPage.baseUrl);
 
