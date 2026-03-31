@@ -12,5 +12,7 @@
  * @class
  */
 export default class Config {
+  static HEADLESS: boolean = false;
+
   static REMOTE_ENABLED: boolean = true;
 }

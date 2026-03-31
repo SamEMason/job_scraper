@@ -5,67 +5,69 @@ import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 import { type Job, Location } from '#src/types.ts';
 
 const main = async () => {
-  let browser: Browser = await chromium.launch();
-  const context = await browser.newContext();
-  let page: Page = await context.newPage();
-  let toastPage: ToastCareerPage = new ToastCareerPage(page);
+  let browser: Browser | undefined;
 
-  // Go to Toast Careers page
-  await page.goto(toastPage.baseUrl);
+  try {
+    browser = await chromium.launch({ headless: Config.HEADLESS });
+    const context = await browser.newContext();
+    let page: Page = await context.newPage();
+    let toastPage: ToastCareerPage = new ToastCareerPage(page);
 
-  // Expect a title to contain "Current Openings".
-  await expect(page).toHaveTitle(/Current Openings/);
+    // Go to Toast Careers page
+    await page.goto(toastPage.baseUrl);
 
-  // Check the Remote Jobs filter
-  if (Config.REMOTE_ENABLED) {
-    await toastPage.checkRemoteJobs();
-  }
+    // Expect a title to contain "Current Openings".
+    await expect(page).toHaveTitle(/Current Openings/);
 
-  // KEEPING SECTION SPECIFICALLY TAILORED TO ENGINEERING FOR NOW
-  // AVOIDING EARLY ABSTRACTION
+    // Check the Remote Jobs filter
+    if (Config.REMOTE_ENABLED) {
+      await toastPage.checkRemoteJobs();
+    }
 
-  // Check the engineering filter
-  await toastPage.checkEngineering();
+    // KEEPING SECTION SPECIFICALLY TAILORED TO ENGINEERING FOR NOW
+    // AVOIDING EARLY ABSTRACTION
 
-  // Grab all job search results card rows on page 1
-  const searchResultsRows = await toastPage.getJobSearchCardRows();
+    // Check the engineering filter
+    await toastPage.checkEngineering();
 
-  const jobTitles = searchResultsRows.locator(
-    'h3.job-search-results-card-title'
-  );
-  const titles = await jobTitles.allInnerTexts();
+    // Grab all job search results card rows on page 1
+    const searchResultsRows = await toastPage.getJobSearchCardRows();
 
-  const jobHrefs = jobTitles.locator('a');
-  const hrefs = await jobHrefs.evaluateAll((links) =>
-    links.map((link) => link.getAttribute('href') || '')
-  );
+    const jobTitles = searchResultsRows.locator(
+      'h3.job-search-results-card-title'
+    );
+    const titles = await jobTitles.allInnerTexts();
 
-  const locations = searchResultsRows.locator('.job-component-location span');
-  const locationText = await locations.allInnerTexts();
+    const jobHrefs = jobTitles.locator('a');
+    const hrefs = await jobHrefs.evaluateAll((links) =>
+      links.map((link) => link.getAttribute('href') || '')
+    );
 
-  const departments = searchResultsRows.locator(
-    '.job-component-department span'
-  );
-  const deptNames = await departments.allInnerTexts();
+    const locations = searchResultsRows.locator('.job-component-location span');
+    const locationText = await locations.allInnerTexts();
 
-  let jobListings: Job[] = [];
+    const departments = searchResultsRows.locator(
+      '.job-component-department span'
+    );
+    const deptNames = await departments.allInnerTexts();
 
-  for (let i = 0; i < titles.length; i++) {
-    const currJob: Job = {
-      title: titles[i],
+    let jobListings: Job[] = titles.map((title, i) => ({
+      title,
       location: new Location(locationText[i]),
       dept: deptNames[i],
       href: hrefs[i],
       reqId: undefined,
-    };
+    }));
 
-    jobListings.push(currJob);
+    console.log(jobListings);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+    // await page.pause();
   }
-
-  console.log(jobListings);
-
-  await browser.close();
-  // await page.pause();
 };
 
 main();
