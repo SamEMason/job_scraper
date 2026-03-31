@@ -63,12 +63,7 @@ test('Gets job data from Toast Careers page', async () => {
   for (let i = 0; i < titles.length; i++) {
     const currJob: Job = {
       title: titles[i],
-      location: {
-        country: locationText[i],
-        city: '',
-        state: '',
-        remote: '',
-      },
+      location: new Location(locationText[i]),
       dept: deptNames[i],
       href: hrefs[i],
       reqId: undefined,
