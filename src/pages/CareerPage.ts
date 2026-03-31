@@ -10,7 +10,7 @@ export default abstract class CareerPage {
     this.page = page;
   }
 
-  async getJobSearchCardRows(): Promise<Locator> {
+  async getJobSearchRows(): Promise<Locator> {
     const rows = this.page.locator(this.jobRowSelector);
     await rows.first().waitFor({ state: 'visible' });
     return rows;
@@ -32,7 +32,7 @@ export default abstract class CareerPage {
   }
 
   private async waitForFilter() {
-    const rows = await this.getJobSearchCardRows();
+    const rows = await this.getJobSearchRows();
     const firstRow = rows.first();
     const oldText = await firstRow.innerText();
 
