@@ -12,7 +12,5 @@
  * @class
  */
 export default class Config {
-  static CAREER_PAGE_URL: string = 'https://careers.toasttab.com/jobs/search';
-
   static REMOTE_ENABLED: boolean = true;
 }
