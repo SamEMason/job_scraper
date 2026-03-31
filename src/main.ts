@@ -29,7 +29,7 @@ const main = async () => {
     await toastPage.checkEngineering();
 
     // Grab all job search results card rows on page 1
-    const searchResultsRows = await toastPage.getJobSearchCardRows();
+    const searchResultsRows = await toastPage.getJobSearchRows();
 
     // Get title text from job search result card elements
     const jobTitles = searchResultsRows.locator(
