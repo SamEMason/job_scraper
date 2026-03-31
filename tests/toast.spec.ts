@@ -1,11 +1,24 @@
-import { test, expect } from '@playwright/test';
+import { Browser, chromium, expect, Page, test } from '@playwright/test';
 
 import Config from '#src/Config.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 
-test('Gets job data from Toast Careers page', async ({ page }) => {
-  const toastPage = new ToastCareerPage(page);
+let toastPage: ToastCareerPage;
+let browser: Browser;
+let page: Page;
 
+test.beforeAll(async () => {
+  browser = await chromium.launch();
+  const context = await browser.newContext();
+  page = await context.newPage();
+  toastPage = new ToastCareerPage(page);
+});
+
+test.afterAll(async () => {
+  await browser.close();
+});
+
+test('Gets job data from Toast Careers page', async () => {
   // Go to Toast Careers page
   await page.goto(toastPage.baseUrl);
 
@@ -14,23 +27,21 @@ test('Gets job data from Toast Careers page', async ({ page }) => {
 
   // Check the Remote Jobs filter
   if (Config.REMOTE_ENABLED) {
-    const remoteJobsCheckbox = toastPage.remoteCheckbox;
-    await remoteJobsCheckbox.check();
+    await toastPage.checkRemoteJobs();
   }
 
   // KEEPING SECTION SPECIFICALLY TAILORED TO ENGINEERING FOR NOW
   // AVOIDING EARLY ABSTRACTION
 
   // Check the engineering filter
-  const engineeringListItem = page.locator('li', { hasText: 'Engineering' });
-  const engineeringCheckbox = engineeringListItem.locator('input');
-  await engineeringCheckbox.check();
+  await toastPage.checkEngineering();
 
   // Grab all job search results card rows on page 1
-  const searchResultsRows = page.locator('.job-search-results-card-row');
-  await searchResultsRows.waitFor({ state: 'visible' });
+  const searchResultsRows = await toastPage.getJobSearchCardRows();
 
-  await searchResultsRows.highlight();
+  const rowText = await searchResultsRows.allInnerTexts();
+
+  rowText.forEach((text) => console.log(text));
 
   await page.pause();
 });
