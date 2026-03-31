@@ -2,6 +2,7 @@ import { Browser, Page, chromium, expect, test } from '@playwright/test';
 
 import Config from '#src/Config.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
+import { Job, Location } from '#src/types.ts';
 
 let toastPage: ToastCareerPage;
 let browser: Browser;
@@ -39,9 +40,45 @@ test('Gets job data from Toast Careers page', async () => {
   // Grab all job search results card rows on page 1
   const searchResultsRows = await toastPage.getJobSearchCardRows();
 
-  const rowText = await searchResultsRows.allInnerTexts();
+  const jobTitles = searchResultsRows.locator(
+    'h3.job-search-results-card-title'
+  );
+  const jobHrefs = jobTitles.locator('a');
 
-  rowText.forEach((text) => console.log(text));
+  const titles = await jobTitles.allInnerTexts();
+  const hrefs = await jobHrefs.elementHandles();
 
-  await page.pause();
+  for (const href of hrefs) {
+    const link = await href.getAttribute('href');
+  }
+
+  const locations = searchResultsRows.locator('.job-component-location span');
+  const locationText = await locations.allInnerTexts();
+
+  const departments = searchResultsRows.locator(
+    '.job-component-department span'
+  );
+  const deptNames = await departments.allInnerTexts();
+
+  let jobListings: Job[] = [];
+
+  for (let i = 0; i < titles.length; i++) {
+    const currJob: Job = {
+      title: titles[i],
+      location: {
+        country: locationText[i],
+        city: '',
+        state: '',
+        remote: '',
+      },
+      dept: deptNames[i],
+      href: (await hrefs[i].getAttribute('href')) || '',
+      reqId: undefined,
+    };
+
+    jobListings.push(currJob);
+  }
+
+  console.log(jobListings);
+  // await page.pause();
 });
