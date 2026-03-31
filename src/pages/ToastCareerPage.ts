@@ -1,20 +1,17 @@
-import { type Locator, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
 
-export default class ToastCareerPage {
+import CareerPage from '#src/pages/CareerPage.ts';
+
+export default class ToastCareerPage extends CareerPage {
   public baseUrl = 'https://careers.toasttab.com/jobs/search';
-
-  private page: Page;
+  public jobRowSelector: string = '.job-search-results-card-row';
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
   }
 
   async checkRemoteJobs(): Promise<void> {
-    const checkbox = this.page.locator('#remote');
-    await checkbox.waitFor({ state: 'visible' });
-    await checkbox.scrollIntoViewIfNeeded();
-    await checkbox.check();
-    await this.waitForFilter();
+    await this.checkFilter('#remote');
   }
 
   async checkEngineering(): Promise<void> {
@@ -24,29 +21,6 @@ export default class ToastCareerPage {
       })
       .locator('input');
 
-    await checkbox.waitFor({ state: 'visible' });
-    await checkbox.scrollIntoViewIfNeeded();
-    await checkbox.check();
-    await this.waitForFilter();
-  }
-
-  async getJobSearchCardRows(): Promise<Locator> {
-    const rows = this.page.locator('.job-search-results-card-row');
-    await rows.first().waitFor({ state: 'visible' });
-    return rows;
-  }
-
-  private async waitForFilter() {
-    const rows = await this.getJobSearchCardRows();
-    const firstRow = rows.first();
-    const oldText = await firstRow.innerText();
-
-    await this.page.waitForFunction(
-      ({ selector, oldText }) => {
-        const el = document.querySelector(selector) as HTMLElement | null;
-        return el?.innerText !== oldText;
-      },
-      { selector: '.job-search-results-card-row:first-child', oldText }
-    );
+    await this.checkFilter(checkbox);
   }
 }
