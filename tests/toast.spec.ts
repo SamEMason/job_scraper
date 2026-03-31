@@ -1,17 +1,20 @@
 import { test, expect } from '@playwright/test';
 
 import Config from '#src/Config.ts';
+import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 
 test('Gets job data from Toast Careers page', async ({ page }) => {
+  const toastPage = new ToastCareerPage(page);
+
   // Go to Toast Careers page
-  await page.goto(Config.CAREER_PAGE_URL);
+  await page.goto(toastPage.baseUrl);
 
   // Expect a title to contain "Current Openings".
   await expect(page).toHaveTitle(/Current Openings/);
 
   // Check the Remote Jobs filter
   if (Config.REMOTE_ENABLED) {
-    const remoteJobsCheckbox = page.locator('#remote');
+    const remoteJobsCheckbox = toastPage.remoteCheckbox;
     await remoteJobsCheckbox.check();
   }
 
