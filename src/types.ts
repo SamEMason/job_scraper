@@ -6,7 +6,7 @@ export interface Job {
   reqId?: string;
 }
 
-interface Location {
+export interface Location {
   country: string;
   city?: string;
   state?: string;
