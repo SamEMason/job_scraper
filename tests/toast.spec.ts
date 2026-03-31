@@ -17,7 +17,7 @@ test('Gets job data from Toast Careers page', async ({ page }) => {
 
   // KEEPING SECTION SPECIFICALLY TAILORED TO ENGINEERING FOR NOW
   // AVOIDING EARLY ABSTRACTION
-  
+
   // Check the engineering filter
   const engineeringListItem = page.locator('li', { hasText: 'Engineering' });
   const engineeringCheckbox = engineeringListItem.locator('input');
