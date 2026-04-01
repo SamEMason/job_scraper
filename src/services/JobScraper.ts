@@ -67,6 +67,8 @@ export default class JobScraper {
       // Get hrefs from anchor tags
       const href = (await row.locator('a').getAttribute('href')) || '';
 
+      const isRemote = await row.locator('li.job-component.remote').isVisible();
+
       // Get location string from job location element
       const location = await row
         .locator('.job-component-location span')
@@ -80,7 +82,7 @@ export default class JobScraper {
       // Use create array of Job items using gathered job listing data
       this.jobListings.push({
         title,
-        location: new Location(location),
+        location: new Location(location, isRemote),
         dept,
         href,
         reqId: undefined,
