@@ -4,7 +4,7 @@ import CareerPage from '#src/pages/CareerPage.ts';
 
 export default class ToastCareerPage extends CareerPage {
   public baseUrl = 'https://careers.toasttab.com/jobs/search';
-  public jobRowSelector: string = '.job-search-results-card-row';
+  public jobRowSelector: string = '.job-search-results-card-body';
 
   constructor(page: Page) {
     super(page);
