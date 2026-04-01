@@ -9,6 +9,7 @@ export default class JobScraper {
   private browser: Browser;
   private page: Page;
   private toastPage: ToastCareerPage;
+  private batchSize: number = 10;
 
   public jobListings: Job[] = [];
 
@@ -67,7 +68,8 @@ export default class JobScraper {
       // Get hrefs from anchor tags
       const href = (await row.locator('a').getAttribute('href')) || '';
 
-      const isRemote = await row.locator('li.job-component.remote').isVisible();
+      const remoteElement = row.locator('li.job-component-remote');
+      const isRemote = (await remoteElement.count()) > 0;
 
       // Get location string from job location element
       const location = await row
@@ -87,6 +89,42 @@ export default class JobScraper {
         href,
         reqId: undefined,
       });
+    }
+
+    await this.resolveReqIds();
+    await this.page.pause();
+  }
+
+  private async resolveReqIds() {
+    for (let i = 0; i < this.jobListings.length; i += this.batchSize) {
+      await Promise.all(
+        this.jobListings.slice(i, i + this.batchSize).map(async (job) => {
+          let page: Page | undefined;
+
+          try {
+            page = await this.browser.newPage();
+            await page.goto(job.href);
+
+            const reqId = await page
+              .locator('li.job-component-requisition-identifier > span')
+              .innerText();
+
+            job.reqId = reqId.trim();
+          } catch (err) {
+            if (err instanceof Error) {
+              console.error(
+                `Failed to scrape reqId for ${job.title}: ${err.message}`
+              );
+            } else {
+              console.error(`Failed to scrape reqId for ${job.title}: ${err}`);
+            }
+          } finally {
+            if (page) {
+              await page.close();
+            }
+          }
+        })
+      );
     }
   }
 }
