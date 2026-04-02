@@ -15,4 +15,6 @@ export default class Config {
   static HEADLESS: boolean = false;
 
   static REMOTE_ENABLED: boolean = true;
+
+  static SECOND_PASS_ENABLED: boolean = false;
 }

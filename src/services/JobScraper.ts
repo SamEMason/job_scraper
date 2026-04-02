@@ -45,7 +45,8 @@ export default class JobScraper {
 
     await this.collectJobs();
 
-    await this.resolveReqIds();
+    if (Config.SECOND_PASS_ENABLED) await this.resolveReqIds();
+
     await this.page.pause();
   }
 
