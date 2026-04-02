@@ -17,4 +17,8 @@ export default class Config {
   static REMOTE_ENABLED: boolean = true;
 
   static SECOND_PASS_ENABLED: boolean = false;
+
+  static SCRAPE_JOBS_ENABLED: boolean = false;
+
+  static DEPT_UID_DISCOVERY_ENABLED: boolean = true;
 }
