@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "scrape": "ts-node src/main.ts",
+    "scrape": "ts-node index.ts",
     "test": "npx playwright test",
     "preview": "vite preview"
   },
