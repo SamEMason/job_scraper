@@ -1,6 +1,6 @@
-import ScrapeJobs from '#src/tasks/ScrapeJobs.ts';
 import Config from '#src/Config.ts';
 import DiscoverDeptFilterUIDs from '#src/tasks/DiscoverDeptFilterUIDs.ts';
+import ScrapeJobs from '#src/tasks/ScrapeJobs.ts';
 
 export default async function main() {
   if (Config.SCRAPE_JOBS_ENABLED) {
