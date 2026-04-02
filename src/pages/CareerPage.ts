@@ -44,4 +44,8 @@ export default abstract class CareerPage {
       { selector: `${this.jobRowSelector}:first-child`, oldText }
     );
   }
+
+  public async goto(url: string): Promise<void> {
+    await this.page.goto(url, { waitUntil: 'networkidle' });
+  }
 }

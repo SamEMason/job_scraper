@@ -35,7 +35,7 @@ export default class JobScraper {
 
   public async run(): Promise<void> {
     // Go to Toast Careers page
-    await this.page.goto(this.toastPage.baseUrl);
+    await this.toastPage.goto(this.toastPage.baseUrl);
 
     // Check the Remote Jobs filter if enabled
     if (Config.REMOTE_ENABLED) {
