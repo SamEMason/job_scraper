@@ -2,6 +2,7 @@ import { type Page } from '@playwright/test';
 
 import CareerPage from '#src/pages/CareerPage.ts';
 import Config from '#src/Config.ts';
+import Filter from '#src/Filter.ts';
 
 export default class ToastCareerPage extends CareerPage {
   public baseUrl = 'https://careers.toasttab.com/jobs/search';
@@ -20,10 +21,10 @@ export default class ToastCareerPage extends CareerPage {
     await this.checkFilter('#remote');
   }
 
-  async checkEngineering(): Promise<void> {
+  async checkDepartment(dept: string): Promise<void> {
     const checkbox = this.page
       .locator('li', {
-        hasText: 'Engineering',
+        hasText: dept,
       })
       .locator('input');
 
@@ -37,10 +38,8 @@ export default class ToastCareerPage extends CareerPage {
       await this.checkRemoteJobs();
     }
 
-    await this.checkEngineering();
-
+    await this.checkDepartment(Filter.dept.ENGINEERING);
     await this.page.waitForSelector(this.jobRowSelector, { state: 'visible' });
-
     return this.page.url();
   }
 }

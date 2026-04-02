@@ -36,8 +36,6 @@ export default class JobScraper {
   public async run(): Promise<void> {
     await this.toastPage.init();
 
-    console.log(this.toastPage.filterUrl);
-
     if (this.toastPage.filterUrl) {
       // Go to Toast Careers page
       await this.toastPage.goto(this.toastPage.filterUrl);
