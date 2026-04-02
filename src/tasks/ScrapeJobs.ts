@@ -2,7 +2,7 @@ import type { Job } from '#src/models/Job.ts';
 import JobScraper from '#src/services/JobScraper.ts';
 import Task from '#src/tasks/Task.ts';
 
-export class ScrapeJobs extends Task {
+export default class ScrapeJobs extends Task {
   private scraper!: JobScraper;
 
   public getJobs(): Job[] {

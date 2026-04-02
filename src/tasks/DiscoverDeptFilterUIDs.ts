@@ -15,7 +15,7 @@ interface DeptFilterHistory {
   replaced_at: Date;
 }
 
-export class DiscoverDeptFilterUIDs extends Task {
+export default class DiscoverDeptFilterUIDs extends Task {
   private filters: Record<Department, DeptFilter> = {};
 
   protected async awaken(): Promise<void> {}
@@ -23,4 +23,8 @@ export class DiscoverDeptFilterUIDs extends Task {
   protected async execute(): Promise<void> {}
 
   protected async sleep(): Promise<void> {}
+
+  public getFilters() {
+    return this.filters;
+  }
 }
