@@ -34,18 +34,21 @@ export default class JobScraper {
   }
 
   public async run(): Promise<void> {
-    // Go to Toast Careers page
-    await this.toastPage.goto(this.toastPage.baseUrl);
+    await this.toastPage.init();
 
-    // Check the Remote Jobs filter if enabled
-    if (Config.REMOTE_ENABLED) {
-      await this.toastPage.checkRemoteJobs();
+    console.log(this.toastPage.filterUrl);
+
+    if (this.toastPage.filterUrl) {
+      // Go to Toast Careers page
+      await this.toastPage.goto(this.toastPage.filterUrl);
+    } else {
+      throw new Error('ToastCareerPage not initialized');
     }
 
-    // Check the engineering filter
-    await this.toastPage.checkEngineering();
-
     await this.collectJobs();
+
+    await this.resolveReqIds();
+    await this.page.pause();
   }
 
   public getJobs(): Job[] {
@@ -54,6 +57,9 @@ export default class JobScraper {
 
   private async collectJobs(): Promise<void> {
     // Grab all job search results card rows on page 1
+    await this.page.waitForSelector(this.toastPage.jobRowSelector, {
+      state: 'visible',
+    });
     const searchResultsRows = await this.toastPage.getJobSearchRows();
     const searchResultsCount = await searchResultsRows.count();
 
@@ -90,9 +96,6 @@ export default class JobScraper {
         reqId: undefined,
       });
     }
-
-    await this.resolveReqIds();
-    await this.page.pause();
   }
 
   private async resolveReqIds() {
