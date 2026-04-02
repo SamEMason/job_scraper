@@ -1,9 +1,10 @@
-import { chromium, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
 
 import type { Job } from '#src/models/Job.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 import Config from '#src/Config.ts';
 import { Location } from '#src/models/Location.ts';
+import { launchPage } from '#src/lib/browserHelper.ts';
 
 export default class JobScraper {
   private browser: Browser;
@@ -21,11 +22,7 @@ export default class JobScraper {
 
   public static async create(): Promise<JobScraper> {
     // Launch browser and initialize page
-    const browser: Browser = await chromium.launch({
-      headless: Config.HEADLESS,
-    });
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const { browser, page } = await launchPage();
     return new JobScraper(browser, page);
   }
 
