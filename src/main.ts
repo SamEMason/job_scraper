@@ -1,22 +1,11 @@
-import JobScraper from '#src/services/JobScraper.ts';
+import { ScrapeJobs } from '#src/tasks/ScrapeJobs.ts';
 
 const main = async () => {
-  let scraper: JobScraper | undefined;
+  const scrapeJobTask = new ScrapeJobs();
+  await scrapeJobTask.run();
 
-  try {
-    scraper = await JobScraper.create();
-
-    await scraper.run();
-
-    const jobListings = scraper.getJobs();
-
-    console.log(jobListings);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    // Clean up
-    if (scraper) await scraper.close();
-  }
+  const jobs = scrapeJobTask.getJobs();
+  console.log(jobs);
 };
 
 main();
