@@ -2,36 +2,46 @@ import Task from '#src/tasks/Task.ts';
 import Filter from '#src/Filter.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 import { launchPage } from '#src/lib/browserHelper.ts';
-import type { Browser, Page } from '@playwright/test';
+import type { Browser } from '@playwright/test';
 
 type Department = (typeof Filter.dept)[keyof typeof Filter.dept];
 
 interface DeptFilter {
   uid: string;
-  discovered_at: Date;
+  discoveredAt: number;
+  seenUnchangedAt: number;
   history: DeptFilterHistory[];
 }
 
 interface DeptFilterHistory {
   uid: string;
-  discovered_at: Date;
-  replaced_at: Date;
+  discoveredAt: number;
+  replacedAt: number;
 }
 
 export default class DiscoverDeptFilterUIDs extends Task {
   private browser!: Browser;
-  private page!: Page;
-  private toastPage!: ToastCareerPage;
   private filters: Record<Department, DeptFilter> = {};
 
   protected async awaken(): Promise<void> {
-    const { browser, page } = await launchPage();
+    const { browser } = await launchPage();
     this.browser = browser;
-    this.page = page;
-    this.toastPage = new ToastCareerPage(page);
   }
 
-  protected async execute(): Promise<void> {}
+  protected async execute(): Promise<void> {
+    for (const [key, dept] of Object.entries(Filter.dept)) {
+      const url = await this.getDeptFilterUrl(dept);
+
+      const now = Date.now();
+
+      this.filters[key as keyof typeof Filter.dept] = {
+        uid: url,
+        discoveredAt: now,
+        seenUnchangedAt: now,
+        history: [],
+      };
+    }
+  }
 
   protected async sleep(): Promise<void> {
     await this.browser.close();
@@ -41,15 +51,22 @@ export default class DiscoverDeptFilterUIDs extends Task {
     return this.filters;
   }
 
-  // private async getDeptFilterUrl(): Promise<string> {
-  //   await this.goto(this.baseUrl);
+  private async getDeptFilterUrl(dept: string): Promise<string> {
+    const page = await this.browser.newPage();
+    const toastPage = new ToastCareerPage(page);
 
-  //   if (Config.REMOTE_ENABLED) {
-  //     await this.checkRemoteJobs();
-  //   }
+    await toastPage.goto(toastPage.baseUrl);
 
-  //   await this.checkDepartment(Filter.dept.ENGINEERING);
-  //   await this.page.waitForSelector(this.jobRowSelector, { state: 'visible' });
-  //   return this.page.url();
-  // }
+    await toastPage.checkDepartment(dept);
+
+    await page.waitForSelector(toastPage.jobRowSelector, {
+      state: 'visible',
+    });
+
+    const url = page.url();
+
+    await page.close();
+
+    return url;
+  }
 }
