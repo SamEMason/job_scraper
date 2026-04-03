@@ -32,17 +32,13 @@ export default abstract class CareerPage {
   }
 
   private async waitForFilter() {
+    const oldUrl = this.baseUrl;
     const rows = await this.getJobSearchRows();
-    const firstRow = rows.first();
-    const oldText = await firstRow.innerText();
 
-    await this.page.waitForFunction(
-      ({ selector, oldText }) => {
-        const el = document.querySelector(selector) as HTMLElement | null;
-        return el?.innerText !== oldText;
-      },
-      { selector: `${this.jobRowSelector}:first-child`, oldText }
-    );
+    await Promise.all([
+      this.page.waitForFunction((old) => window.location.href !== old, oldUrl),
+      rows.first().waitFor({ state: 'visible' }),
+    ]);
   }
 
   public async goto(url: string): Promise<void> {
