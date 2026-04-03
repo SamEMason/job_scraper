@@ -22,11 +22,10 @@ export default class ToastCareerPage extends CareerPage {
   }
 
   async checkDepartment(dept: string): Promise<void> {
-    const checkbox = this.page
-      .locator('li', {
-        hasText: dept,
-      })
-      .locator('input');
+    const checkboxListItem = this.page.locator(
+      `li[data-filter=department]:has(span[title="${dept}"])`
+    );
+    const checkbox = checkboxListItem.locator('input');
 
     await this.checkFilter(checkbox);
   }
