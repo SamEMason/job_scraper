@@ -2,21 +2,21 @@ import type { Page } from '@playwright/test';
 
 export default class Filter {
   public static dept = {
-    CUSTOMER_SUCCESS: 'customer success',
-    DESIGN: 'design',
-    ENGINEERING: 'engineering',
-    ENTERPRISE_TECH: 'enterprise tech',
-    FINANCE: 'finance',
-    FINTECH: 'fintech',
-    GENERAL_AND_ADMIN: 'general & admin',
-    HARDWARE: 'hardware',
-    LEGAL: 'legal',
-    MARKETING: 'marketing',
-    PEOPLE_AND_PLACES: 'people & places',
-    PRODUCT: 'product',
-    RESEARCH_AND_DEVELOPMENT: 'research & development',
-    SALES: 'sales',
-    ENTERPRISE_SALES: 'sales : enterprise solutions',
+    CUSTOMER_SUCCESS: 'Customer Success',
+    DESIGN: 'Design',
+    ENGINEERING: 'Engineering',
+    ENTERPRISE_TECH: 'Enterprise Tech',
+    FINANCE: 'Finance',
+    FINTECH: 'Fintech',
+    GENERAL_AND_ADMIN: 'General & Admin',
+    HARDWARE: 'Hardware',
+    LEGAL: 'Legal',
+    MARKETING: 'Marketing',
+    PEOPLE_AND_PLACES: 'People & Places',
+    PRODUCT: 'Product',
+    RESEARCH_AND_DEVELOPMENT: 'Research & Development',
+    SALES: 'Sales',
+    ENTERPRISE_SALES: 'Sales : Enterprise Solutions',
   };
 
   public static country = {
