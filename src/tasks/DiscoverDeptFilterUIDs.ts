@@ -1,8 +1,11 @@
+import plimit from 'p-limit';
+
 import Task from '#src/tasks/Task.ts';
 import Filter from '#src/Filter.ts';
 import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 import { launchPage } from '#src/lib/browserHelper.ts';
 import type { Browser } from '@playwright/test';
+import Config, { DiscoveryMode } from '#src/Config.ts';
 
 type Department = (typeof Filter.dept)[keyof typeof Filter.dept];
 
@@ -29,17 +32,43 @@ export default class DiscoverDeptFilterUIDs extends Task {
   }
 
   protected async execute(): Promise<void> {
-    for (const [key, dept] of Object.entries(Filter.dept)) {
-      const url = await this.getDeptFilterUrl(dept);
+    if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.sequential) {
+      for (const [key, dept] of Object.entries(Filter.dept)) {
+        const url = await this.getDeptFilterUrl(dept);
 
-      const now = Date.now();
+        const now = Date.now();
 
-      this.filters[key as keyof typeof Filter.dept] = {
-        uid: url,
-        discoveredAt: now,
-        seenUnchangedAt: now,
-        history: [],
-      };
+        this.filters[key as keyof typeof Filter.dept] = {
+          uid: url,
+          discoveredAt: now,
+          seenUnchangedAt: now,
+          history: [],
+        };
+      }
+    } else if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.concurrent) {
+      const limit = plimit(Config.CONCURRENCY_LIMIT);
+
+      await Promise.all(
+        Object.entries(Filter.dept).map(async ([key, dept]) =>
+          limit(async () => {
+            const url = await this.getDeptFilterUrl(dept);
+            const uid = this.extractUID(url);
+
+            const now = Date.now();
+
+            this.filters[key as keyof typeof Filter.dept] = {
+              uid,
+              discoveredAt: now,
+              seenUnchangedAt: now,
+              history: [],
+            };
+          })
+        )
+      );
+    } else {
+      throw new Error(
+        `Invalid Department UID Discovery Mode: ${Config.DEPT_UID_DISCOVERY_MODE}`
+      );
     }
   }
 
@@ -68,5 +97,17 @@ export default class DiscoverDeptFilterUIDs extends Task {
     await page.close();
 
     return url;
+  }
+
+  private extractUID(url: string): string {
+    const urlParts = url.split('&');
+
+    const [deptParam] = urlParts.filter((part) =>
+      part.includes('department_uids')
+    );
+
+    const uid = deptParam.split('=')[1];
+
+    return uid;
   }
 }
