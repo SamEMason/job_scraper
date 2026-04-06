@@ -6,6 +6,13 @@
  * @created 2026-03-30
  */
 
+export const DiscoveryMode = {
+  sequential: 'SEQUENTIAL',
+  concurrent: 'CONCURRENT',
+} as const;
+
+export type DiscoveryMode = (typeof DiscoveryMode)[keyof typeof DiscoveryMode];
+
 /**
  * Configuration class providing global static settings for the application.
  *
@@ -21,4 +28,8 @@ export default class Config {
   static SCRAPE_JOBS_ENABLED: boolean = false;
 
   static DEPT_UID_DISCOVERY_ENABLED: boolean = true;
+
+  static DEPT_UID_DISCOVERY_MODE: DiscoveryMode = DiscoveryMode.concurrent;
+
+  static CONCURRENCY_LIMIT: number = 10;
 }

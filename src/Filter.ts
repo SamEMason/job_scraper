@@ -14,7 +14,6 @@ export default class Filter {
     MARKETING: 'Marketing',
     PEOPLE_AND_PLACES: 'People & Places',
     PRODUCT: 'Product',
-    RESEARCH_AND_DEVELOPMENT: 'Research & Development',
     SALES: 'Sales',
     ENTERPRISE_SALES: 'Sales : Enterprise Solutions',
   };
