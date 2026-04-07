@@ -1,0 +1,23 @@
+{
+  "name": "scraper",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*"
+  },
+  "scripts": {
+    "scrape": "tsx src/main.ts",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.5.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "p-limit": "^7.3.0"
+  }
+}

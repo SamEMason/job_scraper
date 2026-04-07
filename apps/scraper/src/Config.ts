@@ -32,4 +32,6 @@ export default class Config {
   static DEPT_UID_DISCOVERY_MODE: DiscoveryMode = DiscoveryMode.concurrent;
 
   static CONCURRENCY_LIMIT: number = 10;
+
+  static DEPT_UID_JSON_FILEPATH = 'store/deptFilters.json';
 }

@@ -18,8 +18,15 @@ export default async function main() {
     const discovery = new DiscoverDeptFilterUIDs();
     await discovery.run();
     const deptFilters = discovery.getFilters();
-    console.log(deptFilters);
+    
+    discovery.saveFilters(deptFilters);
+    const output = discovery.getFilters();
+    
+    console.log(output);
+
   }
 
   return 0;
 }
+
+main();

@@ -1,25 +1,13 @@
 {
   "name": "job_scraper",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "imports": {
-    "#src/*": "./src/*"
-  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "scrape": "ts-node index.ts",
-    "test": "npx playwright test",
-    "preview": "vite preview"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "@playwright/test": "^1.58.2",
-    "@types/node": "^25.5.0",
-    "typescript": "~5.9.3",
-    "vite": "^8.0.1"
-  },
-  "dependencies": {
-    "p-limit": "^7.3.0"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1"
 }

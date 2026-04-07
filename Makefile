@@ -1,2 +1,2 @@
 run:
-	@npm run scrape
+	@pnpm --filter scraper run scrape

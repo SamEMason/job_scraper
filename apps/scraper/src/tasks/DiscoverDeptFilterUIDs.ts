@@ -1,3 +1,6 @@
+import fs from 'fs/promises';
+import path from 'path';
+
 import plimit from 'p-limit';
 
 import Task from '#src/tasks/Task.ts';
@@ -9,14 +12,7 @@ import Config, { DiscoveryMode } from '#src/Config.ts';
 
 type Department = (typeof Filter.dept)[keyof typeof Filter.dept];
 
-interface DeptFilterData {
-  meta: DeptMetaData;
-  deptFilters: DeptFilter;
-}
-
-interface DeptMetaData {
-  deptParam: string;
-}
+type DeptFiltersData = Record<Department, DeptFilter>;
 
 interface DeptFilter {
   uid: string;
@@ -33,7 +29,7 @@ interface DeptFilterHistory {
 
 export default class DiscoverDeptFilterUIDs extends Task {
   private browser!: Browser;
-  private filters: Record<Department, DeptFilter> = {};
+  private filters: DeptFiltersData = {};
   private paramKey!: string;
 
   protected async awaken(): Promise<void> {
@@ -121,5 +117,30 @@ export default class DiscoverDeptFilterUIDs extends Task {
     const uid = deptParam.split('=');
 
     return uid;
+  }
+
+  public async saveFilters(data: DeptFiltersData) {
+    const filePath = Config.DEPT_UID_JSON_FILEPATH;
+    const dir = path.dirname(filePath);
+
+    await fs.mkdir(dir, { recursive: true });
+
+    await fs.writeFile(
+      Config.DEPT_UID_JSON_FILEPATH,
+      JSON.stringify(data, null, 2),
+      'utf-8'
+    );
+  }
+
+  public async loadFilters() {
+    try {
+      const raw = await fs.readFile(Config.DEPT_UID_JSON_FILEPATH, 'utf-8');
+      return JSON.parse(raw);
+    } catch (err) {
+      console.error(
+        `Could not load file ${Config.DEPT_UID_JSON_FILEPATH}: ${err}`
+      );
+      throw err;
+    }
   }
 }
