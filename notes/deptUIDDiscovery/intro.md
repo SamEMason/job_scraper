@@ -53,10 +53,8 @@ Hmm how to track the updates, the previous values, the previous update dates...
 
 It's not super important, but it's an experiment to set up.
 
-
-
-
 ( Retry logic:
+
 1. Navigate to the url with the current uid for the filter you want to use
 2. If it fails because the uid expired, scrape to update the uids
 3. Navigate to the url with the updated uid )

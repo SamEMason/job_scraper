@@ -9,47 +9,26 @@ import ToastCareerPage from '#src/pages/ToastCareerPage.ts';
 import { launchPage } from '#src/lib/browserHelper.ts';
 import type { Browser } from '@playwright/test';
 import Config, { DiscoveryMode } from '#src/Config.ts';
-
-type Department = (typeof Filter.dept)[keyof typeof Filter.dept];
-
-type DeptFiltersData = Record<Department, DeptFilter>;
-
-interface DeptFilter {
-  uid: string;
-  discoveredAt: number;
-  seenUnchangedAt: number;
-  history: DeptFilterHistory[];
-}
-
-interface DeptFilterHistory {
-  uid: string;
-  discoveredAt: number;
-  replacedAt: number;
-}
+import type { DeptFiltersData } from '#src/types.ts';
 
 export default class DiscoverDeptFilterUIDs extends Task {
   private browser!: Browser;
-  private filters: DeptFiltersData = {};
-  private paramKey!: string;
+  private filterData: DeptFiltersData = {
+    paramKey: '',
+    filters: {} as DeptFiltersData['filters'],
+  };
 
   protected async awaken(): Promise<void> {
     const { browser } = await launchPage();
     this.browser = browser;
+
+    await this.loadFilters();
   }
 
   protected async execute(): Promise<void> {
     if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.sequential) {
       for (const [key, dept] of Object.entries(Filter.dept)) {
-        const url = await this.getDeptFilterUrl(dept);
-
-        const now = Date.now();
-
-        this.filters[key as keyof typeof Filter.dept] = {
-          uid: url,
-          discoveredAt: now,
-          seenUnchangedAt: now,
-          history: [],
-        };
+        await this.discoverFilterData(key, dept);
       }
     } else if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.concurrent) {
       const limit = plimit(Config.CONCURRENCY_LIMIT);
@@ -57,19 +36,7 @@ export default class DiscoverDeptFilterUIDs extends Task {
       await Promise.all(
         Object.entries(Filter.dept).map(async ([key, dept]) =>
           limit(async () => {
-            const url = await this.getDeptFilterUrl(dept);
-            const [paramKey, uid] = this.extractUID(url);
-
-            if (!this.paramKey) this.paramKey = paramKey;
-
-            const now = Date.now();
-
-            this.filters[key as keyof typeof Filter.dept] = {
-              uid,
-              discoveredAt: now,
-              seenUnchangedAt: now,
-              history: [],
-            };
+            await this.discoverFilterData(key, dept);
           })
         )
       );
@@ -80,12 +47,28 @@ export default class DiscoverDeptFilterUIDs extends Task {
     }
   }
 
+  private async discoverFilterData(key: string, dept: string): Promise<void> {
+    const url = await this.getDeptFilterUrl(dept);
+    const [paramKey, uid] = this.extractUID(url);
+
+    if (!this.filterData.paramKey) this.filterData.paramKey = paramKey;
+
+    const now = Date.now();
+
+    this.filterData.filters[key as keyof typeof Filter.dept] = {
+      uid,
+      discoveredAt: now,
+      seenUnchangedAt: now,
+      history: [],
+    };
+  }
+
   protected async sleep(): Promise<void> {
     await this.browser.close();
   }
 
   public getFilters() {
-    return this.filters;
+    return this.filterData.filters;
   }
 
   private async getDeptFilterUrl(dept: string): Promise<string> {
@@ -119,7 +102,7 @@ export default class DiscoverDeptFilterUIDs extends Task {
     return uid;
   }
 
-  public async saveFilters(data: DeptFiltersData) {
+  public async saveFilters() {
     const filePath = Config.DEPT_UID_JSON_FILEPATH;
     const dir = path.dirname(filePath);
 
@@ -127,7 +110,7 @@ export default class DiscoverDeptFilterUIDs extends Task {
 
     await fs.writeFile(
       Config.DEPT_UID_JSON_FILEPATH,
-      JSON.stringify(data, null, 2),
+      JSON.stringify(this.filterData, null, 2),
       'utf-8'
     );
   }
@@ -135,12 +118,19 @@ export default class DiscoverDeptFilterUIDs extends Task {
   public async loadFilters() {
     try {
       const raw = await fs.readFile(Config.DEPT_UID_JSON_FILEPATH, 'utf-8');
-      return JSON.parse(raw);
-    } catch (err) {
-      console.error(
-        `Could not load file ${Config.DEPT_UID_JSON_FILEPATH}: ${err}`
-      );
-      throw err;
+      this.filterData = JSON.parse(raw);
+    } catch (err: any) {
+      if (err.code === 'ENOENT') {
+        this.filterData = {
+          paramKey: '',
+          filters: {} as DeptFiltersData['filters'],
+        };
+      } else {
+        console.error(
+          `Could not load file ${Config.DEPT_UID_JSON_FILEPATH}: ${err}`
+        );
+        throw err;
+      }
     }
   }
 }
