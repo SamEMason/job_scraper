@@ -9,6 +9,15 @@ import Config, { DiscoveryMode } from '#src/Config.ts';
 
 type Department = (typeof Filter.dept)[keyof typeof Filter.dept];
 
+interface DeptFilterData {
+  meta: DeptMetaData;
+  deptFilters: DeptFilter;
+}
+
+interface DeptMetaData {
+  deptParam: string;
+}
+
 interface DeptFilter {
   uid: string;
   discoveredAt: number;
@@ -25,6 +34,7 @@ interface DeptFilterHistory {
 export default class DiscoverDeptFilterUIDs extends Task {
   private browser!: Browser;
   private filters: Record<Department, DeptFilter> = {};
+  private paramKey!: string;
 
   protected async awaken(): Promise<void> {
     const { browser } = await launchPage();
@@ -52,7 +62,9 @@ export default class DiscoverDeptFilterUIDs extends Task {
         Object.entries(Filter.dept).map(async ([key, dept]) =>
           limit(async () => {
             const url = await this.getDeptFilterUrl(dept);
-            const uid = this.extractUID(url);
+            const [paramKey, uid] = this.extractUID(url);
+
+            if (!this.paramKey) this.paramKey = paramKey;
 
             const now = Date.now();
 
@@ -99,14 +111,14 @@ export default class DiscoverDeptFilterUIDs extends Task {
     return url;
   }
 
-  private extractUID(url: string): string {
+  private extractUID(url: string): string[] {
     const urlParts = url.split('&');
 
     const [deptParam] = urlParts.filter((part) =>
       part.includes('department_uids')
     );
 
-    const uid = deptParam.split('=')[1];
+    const uid = deptParam.split('=');
 
     return uid;
   }
