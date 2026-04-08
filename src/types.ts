@@ -10,13 +10,6 @@ interface DeptFilter {
   uid: UID;
   discoveredAt: Timestamp;
   seenUnchangedAt: Timestamp;
-  history: DeptFilterHistory[];
-}
-
-interface DeptFilterHistory {
-  uid: string;
-  discoveredAt: Timestamp;
-  replacedAt: Timestamp;
 }
 
 export type DeptFiltersStore = Record<Department, DeptFilter>;

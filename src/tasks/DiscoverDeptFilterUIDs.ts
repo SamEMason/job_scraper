@@ -59,7 +59,6 @@ export default class DiscoverDeptFilterUIDs extends Task {
       uid,
       discoveredAt: now,
       seenUnchangedAt: now,
-      history: [],
     };
   }
 
