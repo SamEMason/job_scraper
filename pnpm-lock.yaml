@@ -6,9 +6,7 @@ settings:
 
 importers:
 
-  .: {}
-
-  apps/scraper:
+  .:
     dependencies:
       p-limit:
         specifier: ^7.3.0
