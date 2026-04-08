@@ -1,6 +1,7 @@
 import Config from '#src/Config.ts';
 import DiscoverDeptFilterUIDs from '#src/tasks/DiscoverDeptFilterUIDs.ts';
 import ScrapeJobs from '#src/tasks/ScrapeJobs.ts';
+import Filter from './Filter.ts';
 
 export default async function main() {
   if (Config.SCRAPE_JOBS_ENABLED) {
@@ -22,6 +23,11 @@ export default async function main() {
     const output = discovery.getFilters();
 
     console.log(output);
+  }
+
+  if (Config.GET_FILTER_NAMES_ENABLED) {
+    const filters = await Filter.getFilters();
+    console.log(filters);
   }
 
   return 0;

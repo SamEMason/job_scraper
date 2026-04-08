@@ -1,4 +1,5 @@
-import type { Page } from '@playwright/test';
+import { launchPage } from './lib/browserHelper.ts';
+import ToastCareerPage from './pages/ToastCareerPage.ts';
 
 export default class Filter {
   public static dept = {
@@ -73,12 +74,19 @@ export default class Filter {
     WASHINGTON: 'washington',
   };
 
-  static async getFilters(page: Page): Promise<string[]> {
+  static async getFilters(): Promise<string[]> {
+    const { browser, page } = await launchPage();
+
+    const toastPage = new ToastCareerPage(page);
+    await toastPage.goto(toastPage.baseUrl);
+
     const departments = page.locator('.job-search-list-item-label');
 
-    const deptNames = (await departments.allTextContents()).map((dept) =>
-      dept.trim().toLowerCase()
+    const deptNames = (await departments.allTextContents()).map(
+      (dept: string) => dept.trim()
     );
+
+    await browser.close();
 
     return deptNames;
   }
