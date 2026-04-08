@@ -32,11 +32,11 @@ export default abstract class CareerPage {
   }
 
   private async waitForFilter() {
-    const oldUrl = this.baseUrl;
+    const oldUrl = this.page.url();
     const rows = await this.getJobSearchRows();
 
     await Promise.all([
-      this.page.waitForFunction((old) => window.location.href !== old, oldUrl),
+      this.page.waitForURL((url) => url.toString() !== oldUrl),
       rows.first().waitFor({ state: 'visible' }),
     ]);
   }

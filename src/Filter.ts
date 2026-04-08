@@ -15,7 +15,7 @@ export default class Filter {
     PEOPLE_AND_PLACES: 'People & Places',
     PRODUCT: 'Product',
     SALES: 'Sales',
-    ENTERPRISE_SALES: 'Sales : Enterprise Solutions',
+    // ENTERPRISE_SALES: 'Sales : Enterprise Solutions',
   };
 
   public static country = {

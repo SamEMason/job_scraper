@@ -17,13 +17,11 @@ export default async function main() {
 
     const discovery = new DiscoverDeptFilterUIDs();
     await discovery.run();
-    const deptFilters = discovery.getFilters();
-    
-    discovery.saveFilters(deptFilters);
-    const output = discovery.getFilters();
-    
-    console.log(output);
 
+    discovery.saveFilters();
+    const output = discovery.getFilters();
+
+    console.log(output);
   }
 
   return 0;
