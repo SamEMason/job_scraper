@@ -11,7 +11,7 @@ import type { Browser } from '@playwright/test';
 import Config, { DiscoveryMode } from '#src/Config.ts';
 import type { DeptFiltersData } from '#src/types.ts';
 
-export default class DiscoverDeptFilterUIDs extends Task {
+export default class DeptFilterDiscovery extends Task {
   private browser!: Browser;
   private filterData: DeptFiltersData = {
     paramKey: '',
@@ -112,6 +112,10 @@ export default class DiscoverDeptFilterUIDs extends Task {
       JSON.stringify(this.filterData, null, 2),
       'utf-8'
     );
+  }
+
+  public async merge() {
+
   }
 
   public async loadFilters() {

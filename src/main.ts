@@ -1,5 +1,5 @@
 import Config from '#src/Config.ts';
-import DiscoverDeptFilterUIDs from '#src/tasks/DiscoverDeptFilterUIDs.ts';
+import DeptFilterDiscovery from '#src/tasks/DeptFilterDiscovery.ts';
 import ScrapeJobs from '#src/tasks/ScrapeJobs.ts';
 import Filter from './Filter.ts';
 
@@ -16,7 +16,7 @@ export default async function main() {
   if (Config.DEPT_UID_DISCOVERY_ENABLED) {
     console.log('Department UID discovery initiated!');
 
-    const discovery = new DiscoverDeptFilterUIDs();
+    const discovery = new DeptFilterDiscovery();
     await discovery.run();
 
     discovery.saveFilters();
