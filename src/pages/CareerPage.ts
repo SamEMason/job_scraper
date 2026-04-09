@@ -35,13 +35,23 @@ export default abstract class CareerPage {
     const oldUrl = this.page.url();
     const rows = await this.getJobSearchRows();
 
-    await Promise.all([
-      this.page.waitForURL((url) => url.toString() !== oldUrl),
-      rows.first().waitFor({ state: 'visible' }),
-    ]);
+    try {
+      await Promise.all([
+        this.page.waitForURL((url) => url.toString() !== oldUrl),
+        rows.first().waitFor({ state: 'visible' }),
+      ]);
+    } catch (err) {
+      console.error(`Couldn't find filter at URL ${oldUrl}: ${err}`);
+      throw err;
+    }
   }
 
   public async goto(url: string): Promise<void> {
-    await this.page.goto(url, { waitUntil: 'networkidle' });
+    try {
+      await this.page.goto(url, { waitUntil: 'networkidle' });
+    } catch (err) {
+      console.error(`Couldn't navigate to URL ${url}: ${err}`);
+      throw err;
+    }
   }
 }
