@@ -18,11 +18,11 @@ export default async function main() {
 
     const discovery = new DeptFilterDiscovery();
     await discovery.run();
+    const filterData = discovery.getFilterData();
 
-    discovery.saveFilters();
-    const output = discovery.getFilters();
+    discovery.store.save(filterData);
 
-    console.log(output);
+    console.log(filterData);
   }
 
   if (Config.GET_FILTER_NAMES_ENABLED) {

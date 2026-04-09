@@ -1,6 +1,3 @@
-import fs from 'fs/promises';
-import path from 'path';
-
 import plimit from 'p-limit';
 
 import Task from '#src/tasks/Task.ts';
@@ -10,8 +7,11 @@ import { launchPage } from '#src/lib/browserHelper.ts';
 import type { Browser } from '@playwright/test';
 import Config, { DiscoveryMode } from '#src/Config.ts';
 import type { DeptFiltersData } from '#src/types.ts';
+import { DeptFilterStore } from '#src/services/DeptFilterStore.ts';
 
 export default class DeptFilterDiscovery extends Task {
+  public store = new DeptFilterStore();
+
   private browser!: Browser;
   private filterData: DeptFiltersData = {
     paramKey: '',
@@ -21,8 +21,7 @@ export default class DeptFilterDiscovery extends Task {
   protected async awaken(): Promise<void> {
     const { browser } = await launchPage();
     this.browser = browser;
-
-    await this.loadFilters();
+    this.filterData = await this.store.load();
   }
 
   protected async execute(): Promise<void> {
@@ -66,8 +65,8 @@ export default class DeptFilterDiscovery extends Task {
     await this.browser.close();
   }
 
-  public getFilters() {
-    return this.filterData.filters;
+  public getFilterData() {
+    return this.filterData;
   }
 
   private async getDeptFilterUrl(dept: string): Promise<string> {
@@ -99,41 +98,5 @@ export default class DeptFilterDiscovery extends Task {
     const uid = deptParam.split('=');
 
     return uid;
-  }
-
-  public async saveFilters() {
-    const filePath = Config.DEPT_UID_JSON_FILEPATH;
-    const dir = path.dirname(filePath);
-
-    await fs.mkdir(dir, { recursive: true });
-
-    await fs.writeFile(
-      Config.DEPT_UID_JSON_FILEPATH,
-      JSON.stringify(this.filterData, null, 2),
-      'utf-8'
-    );
-  }
-
-  public async merge() {
-
-  }
-
-  public async loadFilters() {
-    try {
-      const raw = await fs.readFile(Config.DEPT_UID_JSON_FILEPATH, 'utf-8');
-      this.filterData = JSON.parse(raw);
-    } catch (err: any) {
-      if (err.code === 'ENOENT') {
-        this.filterData = {
-          paramKey: '',
-          filters: {} as DeptFiltersData['filters'],
-        };
-      } else {
-        console.error(
-          `Could not load file ${Config.DEPT_UID_JSON_FILEPATH}: ${err}`
-        );
-        throw err;
-      }
-    }
   }
 }

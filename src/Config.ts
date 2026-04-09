@@ -27,9 +27,9 @@ export default class Config {
 
   static SCRAPE_JOBS_ENABLED: boolean = false;
 
-  static DEPT_UID_DISCOVERY_ENABLED: boolean = false;
+  static DEPT_UID_DISCOVERY_ENABLED: boolean = true;
 
-  static GET_FILTER_NAMES_ENABLED: boolean = true;
+  static GET_FILTER_NAMES_ENABLED: boolean = false;
 
   static DEPT_UID_DISCOVERY_MODE: DiscoveryMode = DiscoveryMode.concurrent;
 
