@@ -17,14 +17,16 @@ const handlers: Record<RunMode, () => Promise<void>> = {
   },
   [RunMode.DISCOVERY]: async () => {
     console.log('Department UID discovery initiated!');
-
+    
     const discovery = new DeptFilterDiscovery();
     await discovery.run();
     const filterData = discovery.getFilterData();
-
+    
     console.log(filterData);
   },
   [RunMode.FILTERS]: async () => {
+    console.log('Filter label scraping initiated!');
+
     const filters = await Filter.getFilters();
     console.log(filters);
   },
