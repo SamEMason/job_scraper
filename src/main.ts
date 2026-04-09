@@ -29,8 +29,6 @@ export default async function main() {
     const filters = await Filter.getFilters();
     console.log(filters);
   }
-
-  return 0;
 }
 
 main();
