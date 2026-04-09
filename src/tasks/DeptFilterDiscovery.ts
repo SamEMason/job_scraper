@@ -25,11 +25,11 @@ export default class DeptFilterDiscovery extends Task {
   }
 
   protected async execute(): Promise<void> {
-    if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.sequential) {
+    if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.SEQUENTIAL) {
       for (const [key, dept] of Object.entries(Filter.dept)) {
         await this.discoverFilterData(key, dept);
       }
-    } else if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.concurrent) {
+    } else if (Config.DEPT_UID_DISCOVERY_MODE === DiscoveryMode.CONCURRENT) {
       const limit = plimit(Config.CONCURRENCY_LIMIT);
 
       await Promise.all(
@@ -39,6 +39,9 @@ export default class DeptFilterDiscovery extends Task {
           })
         )
       );
+
+      this.store.save(this.filterData);
+
     } else {
       throw new Error(
         `Invalid Department UID Discovery Mode: ${Config.DEPT_UID_DISCOVERY_MODE}`

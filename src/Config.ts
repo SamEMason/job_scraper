@@ -6,9 +6,17 @@
  * @created 2026-03-30
  */
 
+export const RunMode = {
+  SCRAPE: 'scrape',
+  DISCOVERY: 'discovery',
+  FILTERS: 'filters',
+};
+
+export type RunMode = (typeof RunMode)[keyof typeof RunMode];
+
 export const DiscoveryMode = {
-  sequential: 'SEQUENTIAL',
-  concurrent: 'CONCURRENT',
+  SEQUENTIAL: 'sequential',
+  CONCURRENT: 'concurrent',
 } as const;
 
 export type DiscoveryMode = (typeof DiscoveryMode)[keyof typeof DiscoveryMode];
@@ -25,13 +33,9 @@ export default class Config {
 
   static SECOND_PASS_ENABLED: boolean = false;
 
-  static SCRAPE_JOBS_ENABLED: boolean = false;
+  static RUN_MODE_DEFAULT: RunMode = RunMode.SCRAPE;
 
-  static DEPT_UID_DISCOVERY_ENABLED: boolean = true;
-
-  static GET_FILTER_NAMES_ENABLED: boolean = false;
-
-  static DEPT_UID_DISCOVERY_MODE: DiscoveryMode = DiscoveryMode.concurrent;
+  static DEPT_UID_DISCOVERY_MODE: DiscoveryMode = DiscoveryMode.CONCURRENT;
 
   static CONCURRENCY_LIMIT: number = 10;
 
